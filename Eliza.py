@@ -3,24 +3,35 @@
 @ Author: Sri Ram Sagar Kappagantula,
           Harsimrat Kaur and
           Ritika De.
-@ Date:
+@ Date: September 17, 2018
 '''
 import re
 import logging
 from random import randint
 
 # Questions library based on state.
-STATE_Q_LIBRARY = {'GREET': {1:'[{0}] Hi! I am {0}!', 2:'[{0}] Hello! This is {0}!', 3:'[{0}] I am {0}, and you are?'}, 
-                   'CONFUSED': {1:'Hmmm! Can you elaborate {}.', 2:'Tell me more! {}', 3:'I did not understand what you said. {}!'},
-                   'EXIT': {1:'Bye! {}', 2:'Have a good day! {}', 3:'Enjoy your rest of the day! {}'}
+STATE_Q_LIBRARY = {'GREET': {1:'[{0}] Hi! I am {0}!', 2:'[{0}] Hello! This is {0}!', 3:'[{0}] I am {0}, and you are?'},
+                   'WANT': {1:'', 2:'' ,3:''},
+                   'FEEL': {1:'', 2:'' ,3:''},
+                   'HAVE': {1:'', 2:'' ,3:''},                    
+                   'CONFUSED': {1:'[{0}] Hmmm! Can you elaborate {1}.', 2:'[{0}] Tell me more! {1}', 3:'[{0}] I did not understand what you said. {1}!'},
+                   'EXIT': {1: '[{0}] Bye! {0}', 2: '[{0}] Have a good day! {0}', 3: '[{0}] Enjoy your rest of the day! {0}'}
                   }
 
 # Regex library used to fetch information from user responses based on state.
 STATE_I_LIBRARY = {'GREET': (r'([Aa][Mm]\s*(.+))$', r'([IS|is]\s*(.+))$'),
                   }
 
+def thinking_state():
+    pass
+
 # Converstion state transition table based on the ability of machine to fetch info from user responses.
-STATE_TRANSITION_TABLE = {('GREET', 'CONFUSED'):'GREET', ('GREET', 'EXIT'):'EXIT', ('GREET', 'INFO'):'S1'}
+STATE_TRANSITION_TABLE = {('GREET', 'CONFUSED'):'GREET', ('GREET', 'EXIT'):'EXIT', ('GREET', 'INFO'): thinking_state,
+                          ('WANT', 'CONFUSED'): 'WANT', ('WANT', 'EXIT'): 'EXIT', ('WANT', 'INFO'): thinking_state,
+                          ('FEEL', 'CONFUSED'): 'FEEL', ('FEEL', 'EXIT'): 'EXIT', ('FEEL', 'INFO'): thinking_state,
+                          ('HAVE', 'CONFUSED'): 'HAVE', ('HAVE', 'EXIT'): 'EXIT', ('HAVE', 'INFO'): thinking_state
+                         }
+                
 
 class Machine(object):
     ''' Bot Machine which traverses through the conversations states and uses necessary state infromation 
@@ -72,11 +83,19 @@ class Machine(object):
                     self.user_name = response
                 self.current_state = self.get_next_state(self.current_state, trigger)
                 continue
+            elif self.current_state == 'WANT':
+                continue
+            elif self.current_state == 'FEEL':
+                continue
+            elif self.current_state == 'HAVE':
+                continue
+            elif self.current_state == 'DID':
+                continue
+            elif self.current_state == 'CONFUSED':
+                continue
             elif self.current_state == 'EXIT':
                 print(self.ask_question(self.current_state, self.user_name))
                 break
-            print(self.user_name)
-            break
 
 if __name__ == '__main__':
     current_state = 'GREET'
