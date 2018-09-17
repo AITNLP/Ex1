@@ -10,7 +10,7 @@ import logging
 from random import randint
 
 # Questions library based on state.
-STATE_Q_LIBRARY = {'GREET': {1:'Hi! I am {}!', 2:'Hello! This is {}!', 3:'I am {}, and you are?'}, 
+STATE_Q_LIBRARY = {'GREET': {1:'[{0}] Hi! I am {0}!', 2:'[{0}] Hello! This is {0}!', 3:'[{0}] I am {0}, and you are?'}, 
                    'CONFUSED': {1:'Hmmm! Can you elaborate {}.', 2:'Tell me more! {}', 3:'I did not understand what you said. {}!'},
                    'EXIT': {1:'Bye! {}', 2:'Have a good day! {}', 3:'Enjoy your rest of the day! {}'}
                   }
@@ -80,6 +80,6 @@ class Machine(object):
 
 if __name__ == '__main__':
     current_state = 'GREET'
-    agent_name = 'Orange'
+    agent_name = 'Eliza'
     orange_bot = Machine(agent_name, current_state)
     orange_bot.run()
