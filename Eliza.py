@@ -11,9 +11,11 @@ from random import randint
 
 # Questions library based on state.
 STATE_Q_LIBRARY = {'GREET': {1:'[{0}] Hi! I am {0}!', 2:'[{0}] Hello! This is {0}!', 3:'[{0}] I am {0}, and you are?'},
-                   'WANT': {1:'', 2:'' ,3:''},
-                   'FEEL': {1:'', 2:'' ,3:''},
-                   'HAVE': {1:'', 2:'' ,3:''},                    
+				   'HELP':{1:'[{0}]How can I help you today,{1}?',2:'[{0}] How are you doing today,{1}?'3:'[{0}]Is there anything I can help you with today,{1}?'},
+                   'WANT': {1:'[{0}]Why do you think you want {1}?',2:'[{0}]Do you really need {1}?',3:'[{0}]How will you feel if you get{1}?'},
+                   'FEEL': {1:'[{0}]What made you feel {1}',2:'[{0}]Do you enjoy feeling {1}',3:'[{0}]For how long have you been feeling {1}'},
+                   'HAVE': {1:'[{0}] Do you feel happy having {1}?',2:'[{0}]How will you feel if you lost your {1}?',3:'[{0}] will you like sharing your {1}?'},
+				   'DID':{1:'[{0}] Does it please you doing {1}?',2:'[{0}]Can you elaborate your process for doing {1}.',3:'[{0}] what made you do{1}?'},
                    'CONFUSED': {1:'[{0}] Hmmm! Can you elaborate {1}.', 2:'[{0}] Tell me more! {1}', 3:'[{0}] I did not understand what you said. {1}!'},
                    'EXIT': {1: '[{0}] Bye! {0}', 2: '[{0}] Have a good day! {0}', 3: '[{0}] Enjoy your rest of the day! {0}'}
                   }
