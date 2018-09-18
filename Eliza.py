@@ -8,10 +8,11 @@
 import re
 import logging
 from random import randint
+from random import choice
 
 # Questions library based on state.
 STATE_Q_LIBRARY = {'GREET': {1:'[{0}] Hi! I am {0}!', 2:'[{0}] Hello! This is {0}!', 3:'[{0}] I am {0}, and you are?'},
-				   'HELP':{1:'[{0}]How can I help you today,{1}?',2:'[{0}] How are you doing today,{1}?'3:'[{0}]Is there anything I can help you with today,{1}?'},
+				   'HELP':{1:'[{0}]How can I help you today,{1}?', 2:'[{0}] How are you doing today,{1}?', 3:'[{0}]Is there anything I can help you with today,{1}?'},
                    'WANT': {1:'[{0}]Why do you think you want {1}?',2:'[{0}]Do you really need {1}?',3:'[{0}]How will you feel if you get{1}?'},
                    'FEEL': {1:'[{0}]What made you feel {1}',2:'[{0}]Do you enjoy feeling {1}',3:'[{0}]For how long have you been feeling {1}'},
                    'HAVE': {1:'[{0}] Do you feel happy having {1}?',2:'[{0}]How will you feel if you lost your {1}?',3:'[{0}] will you like sharing your {1}?'},
@@ -30,7 +31,8 @@ STATE_TRANSITION_TABLE = {('GREET', 'CONFUSED'):'GREET', ('GREET', 'EXIT'):'EXIT
                           ('HELP', 'CONFUSED'): 'HELP', ('HELP', 'EXIT'): 'EXIT', ('HELP', 'INFO'): 'DECIDE_STATE',
                           ('WANT', 'CONFUSED'): 'WANT', ('WANT', 'EXIT'): 'EXIT', ('WANT', 'INFO'): 'DECIDE_STATE',
                           ('FEEL', 'CONFUSED'): 'FEEL', ('FEEL', 'EXIT'): 'EXIT', ('FEEL', 'INFO'): 'DECIDE_STATE',
-                          ('HAVE', 'CONFUSED'): 'HAVE', ('HAVE', 'EXIT'): 'EXIT', ('HAVE', 'INFO'): 'DECIDE_STATE'
+                          ('HAVE', 'CONFUSED'): 'HAVE', ('HAVE', 'EXIT'): 'EXIT', ('HAVE', 'INFO'): 'DECIDE_STATE',
+                          ('CONFUSED','INFO'): 'DECIDE_STATE'
                          }
 
 class Machine(object):
@@ -45,6 +47,7 @@ class Machine(object):
         self.__high = 3
         self.machine_name = agent_name
         self.user_name = None
+        self.all_state_responses = None
     
     def ask_question(self, current_state, args):
         question = STATE_Q_LIBRARY.get(current_state).get(randint(self.__low, self.__high))
@@ -64,68 +67,116 @@ class Machine(object):
         else:
             return 'INFO'
 
-    def decide_state(self, previous_state, input_string):
+    def run_all_regex(self, input_string):
         response = None
-        for state, regexes in STATE_I_LIBRARY:
+        results = {}
+        for state, regexes in STATE_I_LIBRARY.items():
                 responses = list({re.search(regex, input_string).groups(0)[1] for regex in regexes})
-                response = responses[0] if len(responses) == 1: else responses[randint(0,len(responses)-1)]
-            _class = classify(response)
-            next_state = STATE_TRANSITION_TABLE.get(current_state, _class)
-                return (next_state, response)
+                response = responses[0] if len(responses) == 1 else responses[randint(0,len(responses)-1)]
+                _class = self.classify(response)
+                results[state] = (response, _class)
+                return results
+        
+    def list_state_with_info(self):
+        return {state : item for state,item in self.all_state_responses if item[1] == 'INFO'}
 
-        return (next_state, response)
+    def decide_state(self):
+        self.all_state_response.pop('GREET')
+        return choice(self.list_state_with_info().keys()) if len(self.list_state_with_info()) else 'CONFUSED'
 
     def run(self):
         " Run methodology where the machine computes and makes state jumps using state information and response classification"
         input_string = None
+        user_response = None
         while(True):
             if self.current_state == 'GREET':
                 print(self.ask_question(self.current_state, [self.machine_name]))
                 input_string = self.get_response()
-                responses = list({re.search(regex, input_string).groups(0)[1] for regex in regexes})
-                response = responses[0] if len(responses) == 1: else responses[randint(0, len(responses)-1)]
-                _class = self.classify(response)
+                self.all_state_responses = self.run_all_regex(input_string)
+                response, _class = self.all_state_response.get(self.current_state)
                 next_state = STATE_TRANSITION_TABLE.get(current_state, _class)
                 if next_state == 'HELP':
                     self.user_name = response
                 self.previous_state = self.current_state
                 self.current_state = next_state
                 continue
-                
+
             elif self.current_state == 'HELP':
+                self.all_state_responses = {}
                 print(self.ask_question(self.current_state, [self.machine_name, self.user_name]))
                 input_string = self.get_response()
-                next_state, response = thinking_state(self.current_state, input_string)
-                
+                self.all_state_responses = self.run_all_regex(input_string)
+                response, _class = self.all_state_response.get(self.current_state)
+                next_state = STATE_TRANSITION_TABLE.get(current_state, _class)
+                user_response = response
                 self.previous_state = self.current_state
                 self.current_state = next_state
                 continue
-            elif self.current_state == 'WANT':
-                print(self.ask_question(self.current_state, [self.machine_name]))
-                self.previous_state = self.current_state
-                self.current_state = next_state
-                continue
-            elif self.current_state == 'FEEL':
 
+
+            elif self.current_state == 'WANT':
+                print(self.ask_question(self.current_state, [self.machine_name, user_response]))
+                input_string = self.get_response()
+                self.all_state_responses = self.run_all_regex(input_string)
+                response, _class = self.all_state_response.get(self.current_state)
+                next_state = STATE_TRANSITION_TABLE.get(current_state, _class)
+                user_response = response
                 self.previous_state = self.current_state
                 self.current_state = next_state
                 continue
+
+            elif self.current_state == 'FEEL':
+                print(self.ask_question(self.current_state, [self.machine_name, user_response]))
+                input_string = self.get_response()
+                self.all_state_responses = self.run_all_regex(input_string)
+                response, _class = self.all_state_response.get(self.current_state)
+                next_state = STATE_TRANSITION_TABLE.get(current_state, _class)
+                user_response = response
+                self.previous_state = self.current_state
+                self.current_state = next_state
+                continue
+
             elif self.current_state == 'HAVE':
+                print(self.ask_question(self.current_state, [self.machine_name, user_response]))
+                input_string = self.get_response()
+                self.all_state_responses = self.run_all_regex(input_string)
+                response, _class = self.all_state_response.get(self.current_state)
+                next_state = STATE_TRANSITION_TABLE.get(current_state, _class)
+                user_response = response
                 self.previous_state = self.current_state
                 self.current_state = next_state
                 continue
+
             elif self.current_state == 'DID':
+                print(self.ask_question(self.current_state, [self.machine_name, user_response]))
+                input_string = self.get_response()
+                response, _class = self.all_state_response.get(self.current_state)
+                next_state = STATE_TRANSITION_TABLE.get(current_state, _class)
+                user_response = response
                 self.previous_state = self.current_state
                 self.current_state = next_state
                 continue
+
+
             elif self.current_state == 'CONFUSED':
-                self.current_state = self.previous_state
+                print(self.ask_question(self.current_state, [self.machine_name, self.user_name]))
+                input_string = self.get_response()
+                self.all_state_responses = self.run_all_regex(input_string)
+                next_state = STATE_TRANSITION_TABLE.get(self.current_state, 'INFO')
+                self.current_state = next_state
                 continue
+
             elif self.current_state == 'EXIT':
                 print(self.ask_question(self.current_state, [self.machine_name, self.user_name]))
                 break
+
             elif self.current_state == 'DECIDE_STATE':
-                self.current_state =
+                ''' Set only the next state to process does nothing else'''
+                self.previous_state = 'DECIDE_STATE'
+                self.current_state = self.decide_state()
+                item = self.all_state_responses.get(self.current_state)
+                if item: 
+                    user_response = item[0]                
                 continue
 
 
