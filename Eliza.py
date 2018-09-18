@@ -47,7 +47,7 @@ class Machine(object):
         self.__high = 3
         self.machine_name = agent_name
         self.user_name = None
-        self.all_state_responses = None
+        self.all_state_response = None
     
     def ask_question(self, current_state, args):
         question = STATE_Q_LIBRARY.get(current_state).get(randint(self.__low, self.__high))
