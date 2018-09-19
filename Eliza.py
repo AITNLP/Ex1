@@ -104,7 +104,6 @@ class Machine(object):
                 except:
                     next_state = 'CONFUSED'
                 next_state = self.check_exit(input_string, next_state)
-                print(next_state)
                 if next_state == 'HELP':
                     self.user_name = response
                 self.previous_state = self.current_state
