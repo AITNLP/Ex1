@@ -23,10 +23,10 @@ STATE_Q_LIBRARY = {'GREET': {1: '[{0}] Hi! I am {0}! I am a Psychotherapist.', 2
 
 # Regex library used to fetch information from user responses based on state.
 STATE_I_LIBRARY = {'GREET': (r'([Aa][Mm]\s*(.+))$', r'([IS|is]\s*(.+))$'),
-                   'WANT': (r'(I\s+need\s+(.*))', r'(I\s+want\s+(.*))'),
-                   'FEEL': (r'(I\s+feel\s+(.*))',),
-                   'HAVE': (r'(I\s+have(.*))', r'(My\s+(.*))'),
-                   'DID': (r'(I\s+think\s+(.*))', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)')
+                   'WANT': (r'(I\s+need\s+(.*))$', r'(I\s+want\s+(.*))$'),
+                   'FEEL': (r'(I\s+feel\s+(.*))$',),
+                   'HAVE': (r'(I\s+have(.*))$', r'(My\s+(.*))$'),
+                   'DID': (r'(I\s+think\s+(.*))$', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)$')
                   }
 
             
