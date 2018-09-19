@@ -5,7 +5,25 @@
                 It is able to get engage in a conversation with user.
                 It recognize certain key words and respond simply based on that word being present in the input. 
                 It also transform certain simple sentence forms from input into questions
-
+				
+@Usage Instructions:  when you run the prog eliza will greet and ask for your name. Then from user input it will  get the name using regular expressions.
+					Once it get the nmae it will ask how eliz can help.User will give its input and from the given answer Eliza will form questions to continue the  conversation. If eliza is not able to get useful information, it will ask user to elaborate or tell more.
+					Example:
+					PS C:\Users\savi0\Ex1> python eliza.py
+					[Eliza] I am Eliza,I am a Psychotherapist and you are?
+					Hi eliza I am savi
+					[Eliza] How are you doing today,savi?
+					savi >I want chocolate.
+					[Eliza] Why do you thnk you want chocolate?
+					savi >I sgfdxghasghx
+					[Eliza] Hmmm! Can you elaborate savi.
+					
+					To exit eliza user can say "Bye"
+					
+@Algorithim:  Once user gives an input, program run regex to get useful information.
+              Based on information it decides the state from which regex belongs.Program has a question library based on state.
+              Once it decides the state it ask question from STATE_Q_LIBRARY.and user is prompted for an answers.Again prog tries to find useful info and  STATE_TRANSITION_TABLE is used to decide the state from which next ques will be asked.
+                  
 @ Author: Sri Ram Sagar Kappagantula,
           Harsimrat Kaur and
           Ritika De.
@@ -21,20 +39,19 @@ STATE_Q_LIBRARY = {'GREET': {1: '[{0}] Hi! I am {0}! I am a Psychotherapist.', 2
 				   'HELP':{1:'[{0}]How can I help you today,{1}?', 2:'[{0}] How are you doing today,{1}?', 3:'[{0}]Is there anything I can help you with today,{1}?'},
                    'WANT': {1:'[{0}]Why do you think you want {1}?',2:'[{0}]Do you really need {1}?',3:'[{0}]How will you feel if you get{1}?'},
                    'FEEL': {1:'[{0}]What made you feel {1}',2:'[{0}]Do you enjoy feeling {1}',3:'[{0}]For how long have you been feeling {1}'},
-                   'HAVE': {1:'[{0}] Do you feel happy having {1}?',2:'[{0}]How will you feel if you lost your {1}?',3:'[{0}] will you like sharing your {1}?'},
+                   'HAVE': {1:'[{0}] Do you feel happy having {1}?',2:'[{0}]How will you feel if you lost your {1}?',3:'[{0}] would you like sharing your {1}?'},
 				   'DID':{1:'[{0}] Does it please you doing {1}?',2:'[{0}]Can you elaborate your process for doing {1}.',3:'[{0}] what made you do{1}?'},
                    'CONFUSED': {1:'[{0}] Hmmm! Can you elaborate {1}.', 2:'[{0}] Tell me more! {1}', 3:'[{0}] I did not understand what you said. {1}!'},
                    'EXIT': {1: '[{0}] Bye! {1}', 2: '[{0}] Have a good day! {1}', 3: '[{0}] Enjoy your rest of the day! {1}'}
                   }
 
 # Regex library used to fetch information from user responses based on state.
-STATE_I_LIBRARY = {'GREET': (r'([Aa][Mm]\s*(.+))$', r'([IS|is]\s*(.+))$'),
+STATE_I_LIBRARY =  {'GREET': (r'([Aa][Mm]\s*(.+))$', r'([IS|is]\s*(.+))$'),
                    'WANT': (r'(I\s+need\s+(.*))$', r'(I\s+want\s+(.*))$'),
                    'FEEL': (r'(I\s+feel\s+(.*))$',),
                    'HAVE': (r'(I\s+have(.*))$', r'(My\s+(.*))$'),
                    'DID': (r'(I\s+think\s+(.*))$', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)$')
                   }
-
             
 # Converstion state transition table based on the ability of machine to fetch info from user responses.
 STATE_TRANSITION_TABLE = {('GREET', 'CONFUSED'):'GREET', ('GREET', 'INFO'): 'HELP',
