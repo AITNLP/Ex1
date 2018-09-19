@@ -1,11 +1,10 @@
-'''
+r'''
 @ Description:  The first assignment is to write an Eliza program in Python. The program is called eliza.p
                 
                 Eliza is a program that plays the role of a  psychotherapist.
-                It is able to get engage in a conversation with user.
+                It is able to get engage in a conversation with user.q
                 It recognize certain key words and respond simply based on that word being present in the input. 
-                It also transform certain simple sentence forms from input into questions
-				
+                It also transform certain simple sentence forms from input into questions				
 @Usage Instructions:  when you run the prog eliza will greet and ask for your name. Then from user input it will  get the name using regular expressions.
 					Once it get the nmae it will ask how eliz can help.User will give its input and from the given answer Eliza will form questions to continue the  conversation. If eliza is not able to get useful information, it will ask user to elaborate or tell more.
 					Example:
@@ -16,18 +15,16 @@
 					savi >I want chocolate.
 					[Eliza] Why do you thnk you want chocolate?
 					savi >I sgfdxghasghx
-					[Eliza] Hmmm! Can you elaborate savi.
-					
-					To exit eliza user can say "Bye"
-					
+					[Eliza] Hmmm! Can you elaborate savi.					
+					To exit eliza user can say "Bye"					
 @Algorithim:  Once user gives an input, program run regex to get useful information.
               Based on information it decides the state from which regex belongs.Program has a question library based on state.
-              Once it decides the state it ask question from STATE_Q_LIBRARY.and user is prompted for an answers.Again prog tries to find useful info and  STATE_TRANSITION_TABLE is used to decide the state from which next ques will be asked.
-                  
+              Once it decides the state it ask question from STATE_Q_LIBRARY.and user is prompted for an answers.Again prog tries to find useful info and  STATE_TRANSITION_TABLE is used to decide the state from which next ques will be asked.                  
 @ Author: Sri Ram Sagar Kappagantula,
           Harsimrat Kaur and
           Ritika De.
 @ Date: September 17, 2018
+
 '''
 import re
 import logging
@@ -47,10 +44,10 @@ STATE_Q_LIBRARY = {'GREET': {1: '[{0}] Hi! I am {0}! I am a Psychotherapist.', 2
 
 # Regex library used to fetch information from user responses based on state.
 STATE_I_LIBRARY =  {'GREET': (r'([Aa][Mm]\s*(.+))$', r'([IS|is]\s*(.+))$'),
-                   'WANT': (r'(I\s+need\s+(.*))$', r'(I\s+want\s+(.*))$'),
-                   'FEEL': (r'(I\s+feel\s+(.*))$',),
-                   'HAVE': (r'(I\s+have(.*))$', r'(My\s+(.*))$'),
-                   'DID': (r'(I\s+think\s+(.*))$', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)$')
+                   'WANT': (r'([Ii]\s+need\s+(.*))$', r'(Ii]\s+want\s+(.*))$'),
+                   'FEEL': (r'(Ii]\s+feel\s+(.*))$',),
+                   'HAVE': (r'(Ii]\s+have(.*))$', r'(My\s+(.*))$'),
+                   'DID': (r'(Ii]\s+think\s+(.*))$', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)$')
                   }
             
 # Converstion state transition table based on the ability of machine to fetch info from user responses.
