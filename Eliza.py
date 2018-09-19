@@ -1,5 +1,11 @@
 '''
-@ Description:
+@ Description:  The first assignment is to write an Eliza program in Python. The program is called eliza.p
+                
+                Eliza is a program that plays the role of a  psychotherapist.
+                It is able to get engage in a conversation with user.
+                It recognize certain key words and respond simply based on that word being present in the input. 
+                It also transform certain simple sentence forms from input into questions
+
 @ Author: Sri Ram Sagar Kappagantula,
           Harsimrat Kaur and
           Ritika De.
@@ -54,25 +60,30 @@ class Machine(object):
         self.all_state_response = None
     
     def ask_question(self, current_state, args):
+        '''Generates a question'''
         question = STATE_Q_LIBRARY.get(current_state).get(randint(self.__low, self.__high))
         return question.format(*args)
 
     def get_response(self):
+       '''Prompt user to type something.'''
        string = input(self.user_name + ' >') if self.user_name else input() 
        return string.strip()
     
     def classify(self, statement):
+        '''Cassifies the responses of the user is infromative or confusing.'''
         if statement == None:
             return 'CONFUSED'
         else:
             return 'INFO'
 
     def check_exit(self, response, next_state):
+        ''' Check to transition to exit or to next dialogue.'''
         if any(x in response.upper() for x in ['BYE', 'EXIT', 'QUIT', 'GOOD NIGHT']):
             return 'EXIT'
         return next_state
 
     def run_all_regex(self, input_string):
+        ''' Regex runner for all states.'''
         response = None
         results = {}
         for state, regexes in STATE_I_LIBRARY.items():
@@ -90,9 +101,11 @@ class Machine(object):
         return results
         
     def list_state_with_info(self):
+        '''List out all infromative state by checking the response classification.'''
         return {state : item for state,item in self.all_state_response if item[1] == 'INFO'}
 
     def decide_state(self):
+        ''' Decides which conversation state the program should go to.'''
         self.all_state_response.pop('GREET')
         return choice(self.list_state_with_info().keys()) if len(self.list_state_with_info()) else 'CONFUSED'
 
@@ -106,7 +119,6 @@ class Machine(object):
                 input_string = self.get_response()
                 try:
                     self.all_state_response = self.run_all_regex(input_string)
-                    print(self.all_state_response)
                     response, _class = self.all_state_response.get(self.current_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
                 except  ArithmeticError:
