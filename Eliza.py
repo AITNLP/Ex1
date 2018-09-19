@@ -11,7 +11,7 @@ from random import randint
 from random import choice
 
 # Questions library based on state.
-STATE_Q_LIBRARY = {'GREET': {1:'[{0}] Hi! I am {0}!', 2:'[{0}] Hello! This is {0}!', 3:'[{0}] I am {0}, and you are?'},
+STATE_Q_LIBRARY = {'GREET': {1: '[{0}] Hi! I am {0}! I am a Psychotherapist.', 2: '[{0}] Hello! This is {0}! I am a Psychotherapist', 3: '[{0}] I am {0},I am a Psychotherapist and you are?'},
 				   'HELP':{1:'[{0}]How can I help you today,{1}?', 2:'[{0}] How are you doing today,{1}?', 3:'[{0}]Is there anything I can help you with today,{1}?'},
                    'WANT': {1:'[{0}]Why do you think you want {1}?',2:'[{0}]Do you really need {1}?',3:'[{0}]How will you feel if you get{1}?'},
                    'FEEL': {1:'[{0}]What made you feel {1}',2:'[{0}]Do you enjoy feeling {1}',3:'[{0}]For how long have you been feeling {1}'},
@@ -23,10 +23,10 @@ STATE_Q_LIBRARY = {'GREET': {1:'[{0}] Hi! I am {0}!', 2:'[{0}] Hello! This is {0
 
 # Regex library used to fetch information from user responses based on state.
 STATE_I_LIBRARY = {'GREET': (r'([Aa][Mm]\s*(.+))$', r'([IS|is]\s*(.+))$'),
-                   'WANT': (r'((.*)\b)',),
-                   'FEEL': (r'((.*)\b)',),
-                   'HAVE': (r'((.*)\b)',),
-                   'DID': (r'((.*)\b)',)
+                   'WANT': (r'(I\s+need\s+(.*))', r'(I\s+want\s+(.*))'),
+                   'FEEL': (r'(I\s+feel\s+(.*))',),
+                   'HAVE': (r'(I\s+have(.*))', r'(My\s+(.*))'),
+                   'DID': (r'(I\s+think\s+(.*))', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)')
                   }
 
             
@@ -61,8 +61,8 @@ class Machine(object):
        string = input(self.user_name + ' >') if self.user_name else input() 
        return string.strip()
     
-    def classify(self, response):
-        if response is None:
+    def classify(self, statement):
+        if statement == None:
             return 'CONFUSED'
         else:
             return 'INFO'
@@ -76,10 +76,17 @@ class Machine(object):
         response = None
         results = {}
         for state, regexes in STATE_I_LIBRARY.items():
-                responses = list({re.search(regex, input_string).groups(0)[1] for regex in regexes})
-                response = responses[0] if len(responses) == 1 else responses[randint(0,len(responses)-1)]
-                _class = self.classify(response)
-                results[state] = (response, _class)
+            responses = [None]
+            for regex in regexes:
+                re_obj = re.search(regex, input_string)
+                try:
+                    responses.append(re_obj.groups(0)[1])
+                except:
+                    continue
+            responses = list(set(responses))
+            response = responses[0] if len(responses) == 1 else responses[randint(0,len(responses)-1)]
+            _class = self.classify(response)
+            results[state] = (response, _class)
         return results
         
     def list_state_with_info(self):
@@ -99,9 +106,10 @@ class Machine(object):
                 input_string = self.get_response()
                 try:
                     self.all_state_response = self.run_all_regex(input_string)
+                    print(self.all_state_response)
                     response, _class = self.all_state_response.get(self.current_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
-                except:
+                except  ArithmeticError:
                     next_state = 'CONFUSED'
                 next_state = self.check_exit(input_string, next_state)
                 if next_state == 'HELP':
