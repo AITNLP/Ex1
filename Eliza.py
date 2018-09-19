@@ -43,12 +43,12 @@ STATE_Q_LIBRARY = {'GREET': {1: '[{0}] Hi! I am {0}! I am a Psychotherapist.', 2
                   }
 
 # Regex library used to fetch information from user responses based on state.
-STATE_I_LIBRARY =  {'GREET': (r'([Aa][Mm]\s*(.+))$', r'([IS|is]\s*(.+))$'),
-                   'WANT': (r'([Ii]\s+need\s+(.*))$', r'([Ii]\s+want\s+(.*))$'),
-                   'FEEL': (r'([Ii]\s+feel\s+(.*))$',),
-                   'HAVE': (r'([Ii]\s+have(.*))$', r'(My\s+(.*))$'),
-                   'DID': (r'([Ii]\s+think\s+(.*))$', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)$')
-                  }
+STATE_I_LIBRARY = {'GREET': r'(AM | am | is | IS)\s*(?P<response>[a-zA-Z0-9]+).*$',
+                   'WANT': r'(need| want |crave| NEED | WANT | CRAVE)\s+(?P<response>.*).*$',
+                   'FEEL': r'(feel | FEEL | Feel | feel)(ings|ing)?\s+(?P<response>.*).*$',
+                   'HAVE': r'(have | had | HAVE | HAD)\s+(?P<response>.*).*$',
+                   'DID': r'(think | taught | mind)\s+(?P<response>.*).*$'
+                   }
             
 # Converstion state transition table based on the ability of machine to fetch info from user responses.
 STATE_TRANSITION_TABLE = {('GREET', 'CONFUSED'):'GREET', ('GREET', 'INFO'): 'HELP',
@@ -100,28 +100,25 @@ class Machine(object):
         ''' Regex runner for all states.'''
         response = None
         results = {}
-        for state, regexes in STATE_I_LIBRARY.items():
-            responses = [None]
-            for regex in regexes:
-                re_obj = re.search(regex, input_string)
-                try:
-                    responses.append(re_obj.groups(0)[1])
-                except:
-                    continue
-            responses = list(set(responses))
-            response = responses[0] if len(responses) == 1 else responses[randint(0,len(responses)-1)]
+        for state, regex in STATE_I_LIBRARY.items():
+            re_obj = re.search(regex, input_string)
+            try:
+                response = re_obj.group('response')
+            except:
+                continue
             _class = self.classify(response)
             results[state] = (response, _class)
         return results
         
     def list_state_with_info(self):
         '''List out all infromative state by checking the response classification.'''
-        return {state : item for state,item in self.all_state_response if item[1] == 'INFO'}
+        return {state : item for state, item in self.all_state_response.items() if item[1] == 'INFO'}
 
     def decide_state(self):
         ''' Decides which conversation state the program should go to.'''
-        self.all_state_response.pop('GREET')
-        return choice(self.list_state_with_info().keys()) if len(self.list_state_with_info()) else 'CONFUSED'
+        if hasattr(self.all_state_response, 'GREET'): 
+            self.all_state_response.pop('GREET')
+        return choice(list(self.list_state_with_info().keys())) if len(self.list_state_with_info()) else 'CONFUSED'
 
     def run(self):
         " Run methodology where the machine computes and makes state jumps using state information and response classification"
@@ -150,7 +147,8 @@ class Machine(object):
                 input_string = self.get_response()
                 try:
                     self.all_state_response = self.run_all_regex(input_string)
-                    response, _class = self.all_state_response.get(self.current_state)
+                    next_state = self.decide_state()
+                    response, _class = self.all_state_response.get(next_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
                     user_response = response
                 except:
@@ -165,7 +163,8 @@ class Machine(object):
                 input_string = self.get_response()
                 try:
                     self.all_state_response = self.run_all_regex(input_string)
-                    response, _class = self.all_state_response.get(self.current_state)
+                    next_state = self.decide_state()
+                    response, _class = self.all_state_response.get(next_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
                     user_response = response
                 except:
@@ -180,7 +179,8 @@ class Machine(object):
                 input_string = self.get_response()
                 try:
                     self.all_state_response = self.run_all_regex(input_string)
-                    response, _class = self.all_state_response.get(self.current_state)
+                    next_state = self.decide_state()
+                    response, _class = self.all_state_response.get(next_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
                     user_response = response
                 except:
@@ -195,7 +195,8 @@ class Machine(object):
                 input_string = self.get_response()
                 try:
                     self.all_state_response = self.run_all_regex(input_string)
-                    response, _class = self.all_state_response.get(self.current_state)
+                    next_state = self.decide_state()
+                    response, _class = self.all_state_response.get(next_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
                     user_response = response
                 except:
@@ -210,7 +211,8 @@ class Machine(object):
                 input_string = self.get_response()
                 try:
                     self.all_state_response = self.run_all_regex(input_string)
-                    response, _class = self.all_state_response.get(self.current_state)
+                    next_state = self.decide_state()
+                    response, _class = self.all_state_response.get(next_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
                     user_response = response
                 except:
@@ -226,8 +228,10 @@ class Machine(object):
                 input_string = self.get_response()
                 try:
                     self.all_state_response = self.run_all_regex(input_string)
-                    response, _class = self.all_state_response.get(self.current_state)
+                    next_state = self.decide_state()
+                    response, _class = self.all_state_response.get(next_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
+                    user_response = response
                 except:
                     next_state = 'CONFUSED'
                 next_state=self.check_exit(input_string, next_state)
