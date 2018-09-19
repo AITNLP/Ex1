@@ -44,10 +44,10 @@ STATE_Q_LIBRARY = {'GREET': {1: '[{0}] Hi! I am {0}! I am a Psychotherapist.', 2
 
 # Regex library used to fetch information from user responses based on state.
 STATE_I_LIBRARY =  {'GREET': (r'([Aa][Mm]\s*(.+))$', r'([IS|is]\s*(.+))$'),
-                   'WANT': (r'([Ii]\s+need\s+(.*))$', r'(Ii]\s+want\s+(.*))$'),
-                   'FEEL': (r'(Ii]\s+feel\s+(.*))$',),
-                   'HAVE': (r'(Ii]\s+have(.*))$', r'(My\s+(.*))$'),
-                   'DID': (r'(Ii]\s+think\s+(.*))$', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)$')
+                   'WANT': (r'([Ii]\s+need\s+(.*))$', r'([Ii]\s+want\s+(.*))$'),
+                   'FEEL': (r'([Ii]\s+feel\s+(.*))$',),
+                   'HAVE': (r'([Ii]\s+have(.*))$', r'(My\s+(.*))$'),
+                   'DID': (r'([Ii]\s+think\s+(.*))$', r'(Can\s+[I|i]\s+do\s+(.*)[^\?]*)$')
                   }
             
 # Converstion state transition table based on the ability of machine to fetch info from user responses.
