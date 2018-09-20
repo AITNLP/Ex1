@@ -132,7 +132,7 @@ class Machine(object):
                     self.all_state_response = self.run_all_regex(input_string)
                     response, _class = self.all_state_response.get(self.current_state)
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
-                except  ArithmeticError:
+                except:
                     next_state = 'CONFUSED'
                 next_state = self.check_exit(input_string, next_state)
                 if next_state == 'HELP':
