@@ -28,4 +28,9 @@ run_all_regex('I feel headache.')
 run_all_regex('I HAVE lunch.')
 run_all_regex('I had lunch.')
 
+I am Ram
+I need Car stand.
+I feel headache.
+I HAVE lunch.
+I had lunch.
 

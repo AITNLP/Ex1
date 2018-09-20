@@ -126,14 +126,14 @@ class Machine(object):
         user_response = None
         while(True):
             if self.current_state == 'GREET':
+                next_state = 'CONFUSED'
                 print(self.ask_question(self.current_state, [self.machine_name]))
                 input_string = self.get_response()
-                try:
-                    self.all_state_response = self.run_all_regex(input_string)
-                    response, _class = self.all_state_response.get(self.current_state)
+                self.all_state_response = self.run_all_regex(input_string)
+                item = self.all_state_response.get(self.current_state)
+                if item:
+                    response, _class = item
                     next_state = STATE_TRANSITION_TABLE.get((self.current_state, _class))
-                except:
-                    next_state = 'CONFUSED'
                 next_state = self.check_exit(input_string, next_state)
                 if next_state == 'HELP':
                     self.user_name = response
