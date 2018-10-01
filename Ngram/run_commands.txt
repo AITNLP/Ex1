@@ -1,0 +1,3 @@
+python ngramp.py 1 10 sample_1.txt
+python ngram.py 2 10 sample_1.txt
+python ngram.py 3 10 sample_1.txt
