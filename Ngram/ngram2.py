@@ -14,29 +14,33 @@ from collections import Counter
 from collections import defaultdict
 from random import choice
 
-def get_text_corpus(files:list) -> str:
-    " Returns a large string of all text files merged togather."
+def get_text_corpus(files):
+    """ Returns a large string of all text files merged togather."""
     raw_text = []
     for fil in files:
         raw_text.append(open(fil, encoding='utf-8').read())
-    raw_text = ' '.join(raw_text)  
+    raw_text = ' '.join(raw_text)
     return re.sub('\n', ' ', raw_text) # Replace all newline with a space and create a long string.
 
 def get_types(tokens):
+    """ Returns all the types of text in-order in a list."""
     seen = set()
     seen_add = seen.add
     return [x for x in tokens if not (x in seen or seen_add(x))]
 
 def generate_start_word(cdf, n_gram):
+    """ Generate start tagged words and randomly choose one word out of them"""
     if n_gram == 1:
         return choice([word_type for word_type in types if not word_type in ('START-TAG', 'END-TAG')])
     start_gram_tokens = [gram_token for gram_token in cdf.keys() if gram_token[0] == 'START-TAG']
     return(choice(start_gram_tokens))
 
 def check_next_exists(cfd, gram_token):
+    """ Check existance of n-gram token in probability table from n-gram and unigram"""
     return True if cfd[gram_token] else False
 
 def next_word(cfd, gram_token):
+    """ Genearate next work at random to choose from the probability n-garam and unigram table."""
     new_gram = gram_token[1:]
     words_ = []
     for word in cfd[gram_token].keys():
@@ -60,8 +64,6 @@ def generate_sentence(cfd, start_gram_token, types):
         elif _next in ('.', '?', '!'):
             break
     return ' '.join([word for word in sentence if word not in ['START-TAG', 'END-TAG']])
-
-
 
 if __name__ == "__main__":
     n_gram = int(sys.argv[1]) # Must be integer.
