@@ -31,7 +31,8 @@ output=[(word,tag) for (word,tag) in tagged_train if tag !=None]
 #tag_fd.most_common()
 
 # count number of times a word is given each tag
-def train(self, tagged_sentences):
+def train(tagged_train):
+    _word_tags = dict()
 	word_tag_counts = ddict(lambda: ddict(lambda: 0))
 	for words, tags in tagged_train:
 		for word, tag in zip(words, tags):
@@ -41,7 +42,8 @@ def train(self, tagged_sentences):
 	for word in word_tag_counts:
 		tag_counts = word_tag_counts[word]
 		tag = max(tag_counts, key=tag_counts.get)
-		self._word_tags[word] = tag
+		_word_tags[word] = tag
+    return _word_tags
 
 
 
