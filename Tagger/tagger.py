@@ -46,12 +46,9 @@ import time
 from collections import Counter
 from collections import defaultdict as ddict
 
-
-
 ##### MostLikelyTag: this function take training data as input and converts it's items into unique set of (word, tag),
 ##### where tag is most common tag for that word
-
-def train(tagged_train):
+def train(tagged_train): # The code snippet is taken from Speech and Language Processing, Daniel Jurafsky.
     _word_tags = dict()
     word_tag_counts = ddict(lambda: ddict(lambda: 0))
     for word, tag in tagged_train:
@@ -64,7 +61,7 @@ def train(tagged_train):
         _word_tags[word] = tag
     return _word_tags
 
-	### this function will take tain data with most likly tag and  test data list(for which we will predict tags)
+	### this function will take train data with most likly tag and  test data list(for which we will predict tags)
 	###output is list of predicted tags
 	###If word is not present in trained data, it will predict tag using following rules
 def predict(x,mylist):
@@ -93,13 +90,11 @@ def predict(x,mylist):
 	return y 
     
 #########################################
-
-# main program
-
+# main function.
 if __name__== '__main__':
 	start_time=time.time()
 	parser = argparse.ArgumentParser()
-	parser.add_argument("file",type = str,nargs='+')                       #to take files from command prompt
+	parser.add_argument("file",type = str,nargs='+')                    #to take files from command prompt
 	
 	args = parser.parse_args()
 	pos_train= open(args.file[0], 'rt', encoding="utf8") 			    #to open and read the training data.
@@ -109,18 +104,18 @@ if __name__== '__main__':
 	#training data to to tuple [(word,tag)]
 
 	tagged_train = [nltk.tag.str2tuple(t) for t in data_train]
-	output=[(word,tag) for (word,tag) in tagged_train if tag !=None]      #remove elements with tag none  
-	##########   # Test file begin
+	output=[(word,tag) for (word,tag) in tagged_train if tag !=None]    #remove elements with tag none  
 
-	test=open(args.file[1], 'rt', encoding="utf8")							#to open and read the test data.
+	##########   # Test file begin
+	test=open(args.file[1], 'rt', encoding="utf8")						#to open and read the test data.
 	test_data=test.read().split()
 	for i in range(len(test_data)):
-		if '[' in test_data: test_data.remove('[')							#remove brackets from list of test data
+		if '[' in test_data: test_data.remove('[')						#remove brackets from list of test data
 		if ']' in test_data:test_data.remove(']') 														
 		
 	########################################	
 		
-	x = train(output)														#Get max likely tag for elements in training data
+	x = train(output)													#Get max likely tag for elements in training data
 	
 	test_tag = predict(x,test_data)
 	Predicted_output=[list(pair) for pair in zip(test_data,test_tag)]
@@ -128,7 +123,7 @@ if __name__== '__main__':
 	f=open(args.file[2],"w")
 	f.write(str(Predicted_output))
 	f.close()
-	file_log=open('logger_log.txt','a+',encoding='utf8')					#log generation
+	file_log=open('logger_log.txt','a+',encoding='utf8')				#log generation
 	time="--- %s seconds ---" % (time.time() - start_time)
 	file_log.write("Time taken{}\n".format(time))
 	file_log.write("Sample tagged text: \n")
