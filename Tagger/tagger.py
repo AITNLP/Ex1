@@ -8,8 +8,8 @@ The program runs without any error and gives/predict tags for test file(2nd inpu
 
 
 @Examples of program input and output :
-Input:  tagger.py pos-train.txt pos-test.txt 
-Output:  pos-test-with-tags.txt and test word + tag  to STDOUT
+Input:  tagger.py pos-train.txt pos-test.txt pos-test-with-tags.txt 
+Output:  pos-test-with-tags.txt will be created 
 
 pos-train.txt          - Tagged training corpus with words and its tags
 pos-test.txt 		    - Untagged test corpus 
@@ -22,13 +22,12 @@ pos-test-with-tags.txt will be used to evaluate accuracy and confusion matrix
 		3)convert train data to tuple of (word,tag) 
 		4)The tag appearing most frequently for a given word is chosen and strored in a list which is considered as baseline model
 		5)test data is converted to list of words to be tagged
-		6)seven rules are defined to tag unknown words 
+		6)eight rules are defined to tag unknown words 
 		   e.g
-		   Rule 1: If  word is 'He'or'he' or'She'or'she'or'It'or'it'or'I'or'me'or'Me'or'You'or'you' tah=('PRP')
-		   Rule 2 If word.endswith('s')   tag= ('NNS')
+		   Rule 1: If word.endswith('s')   tag= ('NNS') 
 		   etc.
 		7)The test words that are not found in the baseline model and dont fall into rules are given "NN" by default
-		8)The above output is directed into pos-test-with-tags.txt for calculating accuracy.
+		8)The above output is directed into pos-tag.txt for calculating accuracy.
 		
 
 @Authors: Sri Ram Sagar Kappagantula
@@ -36,18 +35,21 @@ pos-test-with-tags.txt will be used to evaluate accuracy and confusion matrix
           Ritika De
 @Date: 17 Oct, 2018.
 
-@Accuracy : Note:-The overall accuracy when rules are added is 85.09%
+@Accuracy : Note:-The overall accuracy when rules are added is 85.9%
 		 The overall accuracy when rules are not added and default tag is NN is 84.388%
 '''
 
 import argparse
 import nltk
-import copy, time, sys
+import copy,sys
+import time
 from collections import Counter
 from collections import defaultdict as ddict
 
 
-##### MostLikelyTag
+
+##### MostLikelyTag: this function take training data as input and converts it's items into unique set of (word, tag),
+##### where tag is most common tag for that word
 
 def train(tagged_train):
     _word_tags = dict()
@@ -62,40 +64,46 @@ def train(tagged_train):
         _word_tags[word] = tag
     return _word_tags
 
-def predict(mylist):
-    y=[]
-    for word in mylist:
-        if x.get(word):
-            y.append(x.get(word))
-                
-        elif word[0] == word[0].upper():
-            y.append('NN')
-        elif word.istitle():
-            y.append('NNP')
-        elif word[0].isdigit():
-            y.append('CD')
-        elif word.endswith('s'):
-            y.append('NNS')
-        elif word.endswith('ing'):
-            y.append('VBG')
-        elif word.endswith('ed'):
-            y.append('VBD') 
-        elif word is 'He'or'he' or'She'or'she'or'It'or'it'or'I'or'me'or'Me'or'You'or'you':
-            y.append('PRP')
-        else:
-            y.append('NN')
-        
-    return y
-
+	### this function will take tain data with most likly tag and  test data list(for which we will predict tags)
+	###output is list of predicted tags
+	###If word is not present in trained data, it will predict tag using following rules
+def predict(x,mylist):
+	y=[]
+	for word in mylist:
+		if x.get(word):
+			y.append(x.get(word))
+		elif word[0] == word[0].upper():
+			y.append('NN')
+		elif word.istitle():
+			y.append('NNP')
+		elif word[0].isdigit():
+			y.append('CD')
+		elif word.endswith('s'):
+			y.append('NNS')
+		elif word.endswith('ing'):
+			y.append('VBG')
+		elif word.endswith('ed'):
+			y.append('VBD')
+		elif word is '.':
+			y.append('.')
+		elif word is ',':
+			y.append(',')
+		else:
+			y.append('NN')
+	return y 
+    
 #########################################
-def main():
-	# get input: traing data->pos-train
 
+# main program
+
+if __name__== '__main__':
+	start_time=time.time()
 	parser = argparse.ArgumentParser()
 	parser.add_argument("file",type = str,nargs='+')                       #to take files from command prompt
-
+	
 	args = parser.parse_args()
 	pos_train= open(args.file[0], 'rt', encoding="utf8") 			    #to open and read the training data.
+	#pos-output=args.file[2]
 	data_train = pos_train.read().split()
 
 	#training data to to tuple [(word,tag)]
@@ -112,18 +120,20 @@ def main():
 		
 	########################################	
 		
-	x=train(output)														#Get max likely tag for elements in training data
+	x = train(output)														#Get max likely tag for elements in training data
 	
-	test_tag = predict(test_data)
-
-    for line in test_tag:
-
-        sys.stdout.write("%s\n" %' '.join(line))										#print line by line to file
-
-
-# main program
-
-if __name__== '__main__':
-    main()
+	test_tag = predict(x,test_data)
+	Predicted_output=[list(pair) for pair in zip(test_data,test_tag)]
+	sample=Predicted_output[:10]		
+	f=open(args.file[2],"w")
+	f.write(str(Predicted_output))
+	f.close()
+	file_log=open('logger_log.txt','a+',encoding='utf8')					#log generation
+	time="--- %s seconds ---" % (time.time() - start_time)
+	file_log.write("Time taken{}\n".format(time))
+	file_log.write("Sample tagged text: \n")
+	file_log.write(str(sample)+'\n')
+	file_log.close()
+	
                   
  #print("Total time : " + str(time.time() - start_time))

@@ -1,0 +1,9 @@
+Time taken--- 106.68166375160217 seconds ---
+Sample tagged text: 
+[['No', 'DT'], [',', ','], ['it', 'PRP'], ['was', 'VBD'], ["n't", 'RB'], ['Black', 'NNP'], ['Monday', 'NNP'], ['.', '.'], ['But', 'CC'], ['while', 'IN']]
+Time taken--- 106.92393660545349 seconds ---
+Sample tagged text: 
+[['No', 'DT'], [',', ','], ['it', 'PRP'], ['was', 'VBD'], ["n't", 'RB'], ['Black', 'NNP'], ['Monday', 'NNP'], ['.', '.'], ['But', 'CC'], ['while', 'IN']]
+Time taken--- 106.44741535186768 seconds ---
+Sample tagged text: 
+[['No', 'DT'], [',', ','], ['it', 'PRP'], ['was', 'VBD'], ["n't", 'RB'], ['Black', 'NNP'], ['Monday', 'NNP'], ['.', '.'], ['But', 'CC'], ['while', 'IN']]
