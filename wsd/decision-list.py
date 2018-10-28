@@ -1,5 +1,6 @@
 import sys
 import nltk
+import string
 import pandas as pd
 import xml.etree.ElementTree as ET
 from copy import copy
