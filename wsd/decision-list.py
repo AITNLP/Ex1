@@ -315,4 +315,10 @@ if __name__ == '__main__':
     for id_, sense in zip(test_df['id'], test_df['sense']):
         print(f'<answer instance="{id_}" senseid="{sense}"/>')
 
-# python decision-list.py PA4/line-train.xml PA4/line-test.xml my-decision-list.txt
+# python decision-list.py PA4/line-train.xml PA4/line-test.xml my-decision-list.txt > my-line-answers.txt
+
+'''
+Confusion matrix: = [[55 17]
+                     [1 53]]
+Accuracy: = 0.8571428571428571
+'''
